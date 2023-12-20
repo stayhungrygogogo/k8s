@@ -1,0 +1,28 @@
+#kd -n dev apply -f pc-daemonset.yaml
+#kd -n dev get job
+apiVersion: batch/v1
+kind: Job
+metadata: 
+  name: pc-job
+  namespace: dev
+  labels:
+    controller: job
+spec:
+  completions: 6
+  parallelism: 3
+  #activeDeadlineSeconds: 30
+  #backoffLimit: 6
+  manualSelector: true
+  selector: 
+    matchLabels:
+      app: counter-pod
+  template:
+    metadata:
+      labels:
+        app: counter-pod
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: counter-pod
+        image: busybox:1.30
+        command: ["bin/sh", "-c", "for i in 9 8 7 6 5 4 3 2 1; do echo $i; sleep 3; done"]

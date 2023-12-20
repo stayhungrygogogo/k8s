@@ -1,0 +1,95 @@
+#kd -n dev delete -f volume-hostpath.yaml
+#kd -n dev logs -f volume-emptydir-855b7f4d89-f6cps  -c busybox 
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: pod-pvc1
+  namespace: default
+  labels:
+    controller: deploy
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: volume-pod-pvc
+  template:
+    metadata:
+      labels: 
+        app: volume-pod-pvc
+    spec:
+      containers:
+      - name: busybox
+        image: busybox:1.30
+        command: ["/bin/sh", "-c", "while true;do echo pod1 >> /root/out.text; sleep 10; done;"]
+        volumeMounts:
+        - name: logs-volume
+          mountPath: /root/
+      volumes:
+      - name: logs-volume
+        persistentVolumeClaim:
+          claimName: pvc1
+          readOnly: false
+---
+#kd -n dev delete -f volume-hostpath.yaml
+#kd -n dev logs -f volume-emptydir-855b7f4d89-f6cps  -c busybox 
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: pod-pvc2
+  namespace: default
+  labels:
+    controller: deploy
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: volume-pod-pvc
+  template:
+    metadata:
+      labels: 
+        app: volume-pod-pvc
+    spec:
+      containers:
+      - name: busybox
+        image: busybox:1.30
+        command: ["/bin/sh", "-c", "while true;do echo pod2 >> /root/out.text; sleep 10; done;"]
+        volumeMounts:
+        - name: logs-volume
+          mountPath: /root/
+      volumes:
+      - name: logs-volume
+        persistentVolumeClaim:
+          claimName: pvc2
+          readOnly: false
+---
+#kd -n dev delete -f volume-hostpath.yaml
+#kd -n dev logs -f volume-emptydir-855b7f4d89-f6cps  -c busybox 
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: pod-pvc3
+  namespace: default
+  labels:
+    controller: deploy
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: volume-pod-pvc
+  template:
+    metadata:
+      labels: 
+        app: volume-pod-pvc
+    spec:
+      containers:
+      - name: busybox
+        image: busybox:1.30
+        command: ["/bin/sh", "-c", "while true;do echo pod3 >> /root/out.text; sleep 10; done;"]
+        volumeMounts:
+        - name: logs-volume
+          mountPath: /root/
+      volumes:
+      - name: logs-volume
+        persistentVolumeClaim:
+          claimName: pvc3
+          readOnly: false

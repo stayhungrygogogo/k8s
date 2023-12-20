@@ -1,0 +1,121 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{},"name":"nginxpod","namespace":"dev"},"spec":{"containers":[{"image":"nginx:1.17.1","name":"nginx-containers"}]}}
+  creationTimestamp: "2023-03-21T15:10:43Z"
+  name: pod-hook-exec
+  namespace: dev
+  resourceVersion: "342775"
+  uid: a4399214-024e-4138-8d6b-a47a68a6a995
+spec:
+  containers:
+  - image: nginx:1.17.1
+    imagePullPolicy: IfNotPresent
+    name: nginx-containers
+    ports:
+    - name: nginx-port
+      containerPort: 80
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    lifecycle:
+      postStart:
+        exec: 
+          command: ["/bin/sh", "-c", "echo postStart... > /usr/share/nginx/html/index.html"]
+      preStop:
+        exec:
+          command: ["/usr/sbin/nginx", "-s", "quit"]
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-hgjsq
+      readOnly: true
+    - name: secrets
+      mountPath: "/etc/secrets"
+  initContainers:
+    - name: test-mysql
+      image: busybox:1.30
+      command: ['sh', '-c', 'until ping 127.0.0.1 -c 1 ; do echo waiting  for mysql...; sleep 200; done;']
+    - name: test-mysql1
+      image: busybox:1.30
+      command: ['sh', '-c', 'until ping 127.0.0.1 -c 1 ; do echo waiting  for mysql...; sleep 200; done;']
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: docker-desktop
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: kube-api-access-hgjsq
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+  - name: secrets
+    secret:
+      secretName: mysecret
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2023-03-21T15:10:43Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2023-03-21T15:10:44Z"
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2023-03-21T15:10:44Z"
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2023-03-21T15:10:43Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: docker://3b9c7cbefc8510c50cb7fa52f7270f1b467dd88c9ee88205f37868d5dd5c933a
+    image: nginx:1.17.1
+    imageID: docker-pullable://nginx@sha256:b4b9b3eee194703fc2fa8afa5b7510c77ae70cfba567af1376a573a967c03dbb
+    lastState: {}
+    name: nginx-containers
+    ready: true
+    restartCount: 0
+    started: true
+    state:
+      running:
+        startedAt: "2023-03-21T15:10:43Z"
+  hostIP: 192.168.65.4
+  phase: Running
+  podIP: 10.1.0.32
+  podIPs:
+  - ip: 10.1.0.32
+  qosClass: BestEffort
+  startTime: "2023-03-21T15:10:43Z"

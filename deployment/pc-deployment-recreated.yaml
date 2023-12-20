@@ -1,0 +1,30 @@
+#kd -n dev scale deploy pc-deployment --replicas=3
+#kd -n dev set image deploy pc-deployment nginx=nginx:1.17.2
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: pc-deployment-recreate
+  namespace: dev
+  labels:
+    controller: deploy
+spec:
+  replicas: 3
+  revisionHistoryLimit: 3
+  paused: false
+  progressDeadlineSeconds: 600
+  strategy:
+    type: Recreate
+  selector: 
+    matchLabels:
+      app: nginx-pod
+  template:
+    metadata:
+      labels:
+        app: nginx-pod
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.17.1
+        ports:
+        - name: nginx-port
+          containerPort: 80

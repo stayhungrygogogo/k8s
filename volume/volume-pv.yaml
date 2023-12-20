@@ -1,0 +1,45 @@
+#kd -n dev delete -f volume-hostpath.yaml
+#kd -n dev logs -f volume-emptydir-855b7f4d89-f6cps  -c busybox 
+apiVersion: v1
+kind: PersistentVolume
+metadata: 
+  name: pv1
+spec:
+  nfs:
+    path: /mnt/nfs_share/pv1
+    server: 172.16.212.134
+  capacity:
+    storage: 1Gi
+  accessModes:
+  - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata: 
+  name: pv2
+spec:
+  nfs:
+    path: /mnt/nfs_share/pv2
+    server: 172.16.212.134
+  capacity:
+    storage: 2Gi
+  accessModes:
+  - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata: 
+  name: pv3
+spec:
+  nfs:
+    path: /mnt/nfs_share/pv3
+    server: 172.16.212.134
+  capacity:
+    storage: 3Gi
+  accessModes:
+  - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
